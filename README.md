@@ -1,1 +1,15 @@
 # Object_detection_project_sign_language
+
+
+# How to run 
+```bash
+conda create -n signlang python=3.10 -y
+```
+
+```bash
+conda activate signlang
+```
+
+```bash
+pip install -r requirements.txt
+```
