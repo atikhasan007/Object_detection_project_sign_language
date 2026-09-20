@@ -24,3 +24,13 @@ pip install -r requirements.txt
 - prediction
 - deployment
 - monitoring
+
+
+# wokflows
+- constants
+- config_entity
+- artifact_entity
+- components
+- pipeline
+- app.py
+
