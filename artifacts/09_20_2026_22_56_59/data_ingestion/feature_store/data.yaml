@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 3
+names: ['i love you', 'perfect', 'stop']
+
+roboflow:
+  workspace: project
+  project: sign-language-detection-txpuz
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/project/sign-language-detection-txpuz/dataset/1
