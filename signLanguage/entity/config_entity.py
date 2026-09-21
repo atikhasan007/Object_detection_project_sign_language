@@ -1,5 +1,5 @@
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 
 from signLanguage.constant.training_pipeline import (
@@ -7,14 +7,20 @@ from signLanguage.constant.training_pipeline import (
     DATA_INGESTION_DIR_NAME,
     DATA_INGESTION_FEATURE_STORE_DIR,
     DATA_DOWNLOAD_URL,
+    DATA_VALIDATION_DIR_NAME,
+    DATA_VALIDATION_STATUS_FILE,
+    DATA_VALIDATION_ALL_REQUIRED_FILES
 )
 
 
-TIMESTAMP: str = datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
+TIMESTAMP: str = datetime.now().strftime(
+    "%m_%d_%Y_%H_%M_%S"
+)
 
 
 @dataclass
 class TrainingPipelineConfig:
+
     artifacts_dir: str = os.path.join(
         ARTIFACTS_DIR,
         TIMESTAMP
@@ -26,6 +32,7 @@ training_pipeline_config = TrainingPipelineConfig()
 
 @dataclass
 class DataIngestionConfig:
+
     data_ingestion_dir: str = os.path.join(
         training_pipeline_config.artifacts_dir,
         DATA_INGESTION_DIR_NAME
@@ -37,3 +44,22 @@ class DataIngestionConfig:
     )
 
     data_download_url: str = DATA_DOWNLOAD_URL
+
+
+@dataclass
+class DataValidationConfig:
+
+    data_validaton_dir: str = os.path.join(
+        training_pipeline_config.artifacts_dir,
+        DATA_VALIDATION_DIR_NAME
+    )
+
+    valid_status_file_dir: str = os.path.join(
+        data_validaton_dir,
+        DATA_VALIDATION_STATUS_FILE
+    )
+
+    required_file_list: list = field(
+        default_factory=lambda:
+        DATA_VALIDATION_ALL_REQUIRED_FILES.copy()
+    )
