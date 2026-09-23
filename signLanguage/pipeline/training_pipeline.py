@@ -6,14 +6,18 @@ from signLanguage.exception import SignException
 from signLanguage.components.data_ingestion import DataIngestion
 from signLanguage.components.data_validation import DataValidation
 
+from signLanguage.components.model_trainer import ModelTrainer
+
 from signLanguage.entity.config_entity import (
     DataIngestionConfig,
-    DataValidationConfig
+    DataValidationConfig,
+    ModelTrainerConfig
 )
 
 from signLanguage.entity.artifacts_entity import (
     DataIngestionArtifact,
-    DataValidationArtifact
+    DataValidationArtifact,
+    ModelTrainerArtifact
 )
 
 
@@ -26,13 +30,11 @@ class TrainPipeline:
                 "Initializing TrainPipeline..."
             )
 
-            self.data_ingestion_config = (
-                DataIngestionConfig()
-            )
+            self.data_ingestion_config = DataIngestionConfig()
 
-            self.data_validation_config = (
-                DataValidationConfig()
-            )
+            self.data_validation_config = DataValidationConfig()
+
+            self.model_trainer_config = ModelTrainerConfig()
 
             logging.info(
                 "TrainPipeline initialized successfully."
@@ -61,9 +63,7 @@ class TrainPipeline:
             )
 
             data_ingestion = DataIngestion(
-                data_ingestion_config=(
-                    self.data_ingestion_config
-                )
+                data_ingestion_config=self.data_ingestion_config
             )
 
             logging.info(
@@ -109,12 +109,8 @@ class TrainPipeline:
             )
 
             data_validation = DataValidation(
-                data_ingestion_artifact=(
-                    data_ingestion_artifact
-                ),
-                data_validation_config=(
-                    self.data_validation_config
-                )
+                data_ingestion_artifact=data_ingestion_artifact,
+                data_validation_config=self.data_validation_config
             )
 
             logging.info(
@@ -140,6 +136,49 @@ class TrainPipeline:
 
             logging.error(
                 f"Data Validation failed: {e}"
+            )
+
+            raise SignException(e, sys) from e
+
+    # =========================================================
+    # MODEL TRAINER
+    # =========================================================
+
+    def start_model_trainer(self) -> ModelTrainerArtifact:
+
+        try:
+
+            logging.info(
+                "Entered start_model_trainer method."
+            )
+
+            model_trainer = ModelTrainer(
+                model_trainer_config=self.model_trainer_config
+            )
+
+            logging.info(
+                "ModelTrainer object created successfully."
+            )
+
+            model_trainer_artifact = (
+                model_trainer.initiate_model_trainer()
+            )
+
+            logging.info(
+                "Model Training completed successfully."
+            )
+
+            logging.info(
+                f"Model Trainer Artifact: "
+                f"{model_trainer_artifact}"
+            )
+
+            return model_trainer_artifact
+
+        except Exception as e:
+
+            logging.error(
+                f"Model Training failed: {e}"
             )
 
             raise SignException(e, sys) from e
@@ -195,9 +234,7 @@ class TrainPipeline:
 
             data_validation_artifact = (
                 self.start_data_validation(
-                    data_ingestion_artifact=(
-                        data_ingestion_artifact
-                    )
+                    data_ingestion_artifact=data_ingestion_artifact
                 )
             )
 
@@ -209,6 +246,51 @@ class TrainPipeline:
                 f"Data Validation Artifact: "
                 f"{data_validation_artifact}"
             )
+
+            # =================================================
+            # STEP 3: MODEL TRAINING
+            # =================================================
+
+            logging.info(
+                "STEP 3: Checking Data Validation Status..."
+            )
+
+            logging.info(
+                f"Validation status = "
+                f"{data_validation_artifact.validation_status}"
+            )
+
+            if data_validation_artifact.validation_status:
+
+                logging.info(
+                    "STEP 3: Starting Model Training..."
+                )
+
+                model_trainer_artifact = (
+                    self.start_model_trainer()
+                )
+
+                logging.info(
+                    "STEP 3: Model Training completed."
+                )
+
+                logging.info(
+                    f"Model Trainer Artifact: "
+                    f"{model_trainer_artifact}"
+                )
+
+            else:
+
+                logging.error(
+                    "Data validation failed. "
+                    "Model training will not start."
+                )
+
+                raise SignException(
+                    "Data validation failed. "
+                    "The data is not in the correct format.",
+                    sys
+                )
 
             # =================================================
             # PIPELINE COMPLETED

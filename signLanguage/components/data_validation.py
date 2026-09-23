@@ -1,6 +1,5 @@
 import os
 import sys
-import shutil
 
 from signLanguage.logger import logging
 from signLanguage.exception import SignException
@@ -254,39 +253,19 @@ class DataValidation:
             )
 
             # ----------------------------------------------------
-            # Copy Dataset ZIP If Validation Successful
+            # Final Validation Result
             # ----------------------------------------------------
 
             if status:
 
-                source = (
-                    self.data_ingestion_artifact
-                    .data_zip_file_path
-                )
-
-                destination = os.path.join(
-                    os.getcwd(),
-                    os.path.basename(source)
-                )
-
-                shutil.copy(
-                    source,
-                    destination
-                )
-
                 logging.info(
-                    f"Dataset copied successfully to: "
-                    f"{destination}"
+                    "Data validation completed successfully."
                 )
 
             else:
 
                 logging.warning(
                     "Data validation failed."
-                )
-
-                logging.warning(
-                    "Dataset ZIP will not be copied."
                 )
 
             # ----------------------------------------------------

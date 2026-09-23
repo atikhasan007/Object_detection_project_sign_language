@@ -1,7 +1,7 @@
 import sys
 
-from signLanguage.logger import logging
 from signLanguage.exception import SignException
+from signLanguage.logger import logging
 
 from signLanguage.pipeline.training_pipeline import TrainPipeline
 

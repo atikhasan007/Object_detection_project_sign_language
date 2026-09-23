@@ -9,7 +9,11 @@ from signLanguage.constant.training_pipeline import (
     DATA_DOWNLOAD_URL,
     DATA_VALIDATION_DIR_NAME,
     DATA_VALIDATION_STATUS_FILE,
-    DATA_VALIDATION_ALL_REQUIRED_FILES
+    DATA_VALIDATION_ALL_REQUIRED_FILES,
+    MODEL_TRAINER_BATCH_SIZE,
+    MODEL_TRAINER_DIR_NAME,
+    MODEL_TRAINER_NO_EPOCHS,
+    MODEL_TRAINER_PRETRAINED_WEIGHT_NAME
 )
 
 
@@ -63,3 +67,18 @@ class DataValidationConfig:
         default_factory=lambda:
         DATA_VALIDATION_ALL_REQUIRED_FILES.copy()
     )
+
+
+@dataclass
+class ModelTrainerConfig:
+
+    model_trainer_dir: str = os.path.join(
+        training_pipeline_config.artifacts_dir,
+        MODEL_TRAINER_DIR_NAME
+    )
+
+    weight_name: str = MODEL_TRAINER_PRETRAINED_WEIGHT_NAME
+
+    no_epoch: int = MODEL_TRAINER_NO_EPOCHS
+
+    batch_size: int = MODEL_TRAINER_BATCH_SIZE
